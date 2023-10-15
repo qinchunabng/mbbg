@@ -1,0 +1,7 @@
+import '@/assets/tinymce/tinymce.min.js'
+import '@/assets/tinymce/themes/silver/theme.min.js'
+import '@/assets/tinymce/plugins/table/plugin.min.js'
+import '@/assets/tinymce/icons/default/icons.min.js'
+import '@/assets/tinymce/skins/content/default/content.min.css'
+import '@/assets/tinymce/skins/ui/oxide/skin.min.css'
+import '@/assets/tinymce/skins/ui/oxide/content.min.css'
