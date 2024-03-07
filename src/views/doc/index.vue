@@ -15,12 +15,12 @@
             v-loading="dataLoading">
             <el-table-column type="selection" width="55">
             </el-table-column>
-            <el-table-column fixed prop="name" label="模板名称" width="150">
+            <el-table-column fixed prop="name" label="文档名称" width="150">
             </el-table-column>
             <el-table-column prop="title" label="网页标题" width="120">
             </el-table-column>
-            <el-table-column prop="contentTitle" label="内容标题" width="120">
-            </el-table-column>
+            <!-- <el-table-column prop="contentTitle" label="内容标题" width="120">
+            </el-table-column> -->
             <el-table-column label="操作" width="240">
                 <template slot-scope="scope">
                     <el-button type="text" size="small" @click="handleView(scope.$index, scope.row)">查看</el-button>
@@ -47,10 +47,10 @@
                     <el-input v-model="docData.title" name="title" autocomplete="off"
                         :readonly="formTitle === '查看'"></el-input>
                 </el-form-item>
-                <el-form-item label="文档标题" prop="contentTitle">
+                <!-- <el-form-item label="文档标题" prop="contentTitle">
                     <el-input v-model="docData.contentTitle" name="contentTitle" autocomplete="off"
                         :readonly="formTitle === '查看'"></el-input>
-                </el-form-item>
+                </el-form-item> -->
                 <el-form-item label="文档内容" prop="content">
                     <!-- <el-input v-model="modelData.content" name="content" autocomplete="off"></el-input> -->
                     <!-- <editor v-model="modelData.content" ></editor> -->
@@ -118,9 +118,9 @@ export default {
                 title: [
                     { required: true, message: '请输入文档标题', trigger: 'blur' }
                 ],
-                contentTitle: [
-                    { required: true, message: '请输入文档标题', trigger: 'blur' }
-                ],
+                // contentTitle: [
+                //     { required: true, message: '请输入文档标题', trigger: 'blur' }
+                // ],
                 content: [
                     { required: true, message: '请输入内容', trigger: 'blur' }
                 ]

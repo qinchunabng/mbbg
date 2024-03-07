@@ -30,3 +30,23 @@ export function updateInfo(data){
     data
   });
 }
+
+
+export function getCodeUrl(username, timestamp){
+  return process.env.VUE_APP_BASE_API + `/admin/validCodePic?username=${username}&timestamp=` + timestamp;
+}
+
+export function sendEmailCode(username, email, validCode){
+  return request({
+    url: `/admin/sendEmailCode?username=${username}&email=${email}&validCode=${validCode}`,
+    method: 'get',
+  });
+}
+
+export function resetPassword(data){
+  return request({
+    url: '/admin/resetPassword',
+    method: 'post',
+    data
+  });
+}

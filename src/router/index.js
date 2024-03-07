@@ -36,6 +36,12 @@ export const constantRoutes = [
     component: () => import('@/views/login/index'),
     hidden: true
   },
+  {
+    path: '/forget',
+    component: () => import('@/views/login/forgetPwd'),
+    meta: { title: '忘记密码' },
+    hidden: true
+  },
 
   {
     path: '/404',

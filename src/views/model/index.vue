@@ -19,8 +19,8 @@
             </el-table-column>
             <el-table-column prop="title" label="网页标题" width="120">
             </el-table-column>
-            <el-table-column prop="contentTitle" label="内容标题" width="120">
-            </el-table-column>
+            <!-- <el-table-column prop="contentTitle" label="内容标题" width="120">
+            </el-table-column> -->
             <el-table-column label="操作" width="120">
                 <template slot-scope="scope">
                     <el-button type="text" size="small" @click="handleView(scope.$index, scope.row)">查看</el-button>
@@ -45,10 +45,10 @@
                     <el-input v-model="modelData.title" name="title" autocomplete="off"
                         :readonly="formTitle === '查看'"></el-input>
                 </el-form-item>
-                <el-form-item label="内容标题" prop="contentTitle">
+                <!-- <el-form-item label="内容标题" prop="contentTitle">
                     <el-input v-model="modelData.contentTitle" name="contentTitle" autocomplete="off"
                         :readonly="formTitle === '查看'"></el-input>
-                </el-form-item>
+                </el-form-item> -->
                 <el-form-item label="模板内容" prop="content">
                     <!-- <el-input v-model="modelData.content" name="content" autocomplete="off"></el-input> -->
                     <!-- <editor v-model="modelData.content" ></editor> -->
@@ -68,11 +68,11 @@
 </template>
 
 <script>
-import '@/components/TinyEditor/tinyEditor'
-import { getPage, addModel, udpateModel, removeModel } from '@/api/model'
 import { addDoc } from '@/api/doc'
-import Editor from '@tinymce/tinymce-vue'
+import { addModel, getPage, removeModel, udpateModel } from '@/api/model'
+import '@/components/TinyEditor/tinyEditor'
 import Const from '@/consts/global'
+import Editor from '@tinymce/tinymce-vue'
 
 export default {
     name: 'doc',
@@ -105,16 +105,16 @@ export default {
             },
             rules: {
                 name: [
-                    { required: true, message: '请输入模板名称', trigger: 'blur' }
+                    { required: true, trigger: 'blur', message: '请输入模板名称' }
                 ],
                 title: [
-                    { required: true, message: '请输入模板标题', trigger: 'blur' }
+                    { required: true, trigger: 'blur', message: '请输入模板标题' }
                 ],
-                contentTitle: [
-                    { required: true, message: '请输入内容标题', trigger: 'blur' }
-                ],
+                // contentTitle: [
+                //     { required: true, message: '请输入内容标题', trigger: 'blur' }
+                // ],
                 content: [
-                    { required: true, message: '请输入内容', trigger: 'blur' }
+                    { required: true, trigger: 'blur', message: '请输入内容' }
                 ]
             },
             tinymceCreated: true,
@@ -286,9 +286,9 @@ export default {
                 inputPattern: /^\/?([^\\:*<>|"?\r\n\s/]+\/)*([^\\:*<>|"?\r\n\s/]+)?$/,
                 inputErrorMessage: '路径格式不正确'
             }).then(({ value }) => {
-                debugger
-                addDoc({ 
-                    ...this.modelData, 
+                // debugger
+                addDoc({
+                    ...this.modelData,
                     url: value
                 }).then(res => {
                     if (res.code === Const.ResultCode.Success) {

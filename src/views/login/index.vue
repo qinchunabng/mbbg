@@ -1,6 +1,7 @@
 <template>
   <div class="login-container">
-    <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
+    <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on"
+      label-position="left">
 
       <div class="title-container">
         <h3 class="title">登录</h3>
@@ -10,50 +11,54 @@
         <span class="svg-container">
           <svg-icon icon-class="user" />
         </span>
-        <el-input
-          ref="username"
-          v-model="loginForm.username"
-          placeholder="Username"
-          name="username"
-          type="text"
-          tabindex="1"
-          auto-complete="on"
-        />
+        <el-input ref="username" v-model="loginForm.username" placeholder="用户名" name="username" type="text" tabindex="1"
+          auto-complete="on" />
       </el-form-item>
 
       <el-form-item prop="password">
         <span class="svg-container">
           <svg-icon icon-class="password" />
         </span>
-        <el-input
-          :key="passwordType"
-          ref="password"
-          v-model="loginForm.password"
-          :type="passwordType"
-          placeholder="Password"
-          name="password"
-          tabindex="2"
-          auto-complete="on"
-          @keyup.enter.native="handleLogin"
-        />
+        <el-input :key="passwordType" ref="password" v-model="loginForm.password" :type="passwordType" placeholder="密码"
+          name="password" tabindex="2" auto-complete="on" @keyup.enter.native="handleLogin" />
         <span class="show-pwd" @click="showPwd">
           <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
         </span>
       </el-form-item>
 
-      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">Login</el-button>
+      <div class="item-code" v-if="showValidCode">
+        <el-col :span="11">
+          <el-form-item prop="validCode">
+            <el-input class="code-input" ref="validCode" v-model="loginForm.validCode" name="validCode" placeholder="验证码" />
+          </el-form-item>
+        </el-col>
+        <el-col class="line" :span="2">-</el-col>
+        <el-col :span="11"  class="code-wrapper">
+          <img :src="picCodeUrl" @click="refreshCode"/>
+        </el-col>
+      </div>
+
+      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom: 10px"
+        @click.native.prevent="handleLogin">登录</el-button>
 
       <!-- <div class="tips">
         <span style="margin-right:20px;">username: admin</span>
         <span> password: any</span>
       </div> -->
 
+      <div class="forget"> 
+        <el-button type="text" class="forget-btn" @click="forgetPwd">忘记密码？</el-button>
+      </div>
+
     </el-form>
+
+    
   </div>
 </template>
 
 <script>
 // import { validUsername } from '@/utils/validate'
+import { getCodeUrl } from '@/api/user'
 
 export default {
   name: 'Login',
@@ -73,23 +78,42 @@ export default {
         callback()
       }
     }
+
+    const validateCode = (rule, value, callback) => {
+      if(value.trim() === ''){
+        callback(new Error('请输入验证码'));
+      }else{
+        callback();
+      }
+    }
+
     return {
       loginForm: {
         username: '',
-        password: ''
+        password: '',
+        validCode: '',
       },
       loginRules: {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],
-        password: [{ required: true, trigger: 'blur', validator: validatePassword }]
+        password: [{ required: true, trigger: 'blur', validator: validatePassword }],
+        validCode: [{ required: true, trigger: 'blur', validator: validateCode }]
       },
       loading: false,
       passwordType: 'password',
-      redirect: undefined
+      redirect: undefined,
+      timestamp: new Date().getTime(),
+      showValidCode: false,
+      picCodeUrl: getCodeUrl('', new Date().getTime()),
+    }
+  },
+  computed: {
+    validCodeUrl() {
+      return getCodeUrl(this.loginForm.username, this.timestamp);
     }
   },
   watch: {
     $route: {
-      handler: function(route) {
+      handler: function (route) {
         this.redirect = route.query && route.query.redirect
       },
       immediate: true
@@ -110,17 +134,32 @@ export default {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.loading = true
-          this.$store.dispatch('user/login', this.loginForm).then(() => {
-            this.$router.push({ path: this.redirect || '/' })
+          this.$store.dispatch('user/login', this.loginForm).then(res => {
+            console.log(res);
+            if(res.code !== 200){
+              this.showValidCode = res.data && res.data > 3;
+              //刷新验证码
+              this.refreshCode();
+            }else{
+              this.$router.push({ path: this.redirect || '/' })
+            }
             this.loading = false
-          }).catch(() => {
+          }).catch(e => {
             this.loading = false
+            console.log(e);
           })
         } else {
           console.log('error submit!!')
           return false
         }
       })
+    },
+    refreshCode(){
+      this.picCodeUrl = getCodeUrl(this.forgetForm.email, new Date().getTime());
+      // console.log(this.timestamp);
+    },
+    forgetPwd(){
+      this.$router.push({ path: '/forget'});
     }
   }
 }
@@ -130,8 +169,8 @@ export default {
 /* 修复input 背景不协调 和光标变色 */
 /* Detail see https://github.com/PanJiaChen/vue-element-admin/pull/927 */
 
-$bg:#283443;
-$light_gray:#fff;
+$bg: #283443;
+$light_gray: #fff;
 $cursor: #fff;
 
 @supports (-webkit-mask: none) and (not (cater-color: $cursor)) {
@@ -174,9 +213,9 @@ $cursor: #fff;
 </style>
 
 <style lang="scss" scoped>
-$bg:#2d3a4b;
-$dark_gray:#889aa4;
-$light_gray:#eee;
+$bg: #2d3a4b;
+$dark_gray: #889aa4;
+$light_gray: #eee;
 
 .login-container {
   min-height: 100%;
@@ -234,5 +273,38 @@ $light_gray:#eee;
     cursor: pointer;
     user-select: none;
   }
+
+  .item-code {
+    // display: flex;
+    // justify-content: center;
+
+    .code-input {
+      width: 250px;
+    }
+
+    .code-wrapper{
+      // height: 47px;
+      // line-height: 47px;
+      box-sizing: border-box;
+
+      img{
+        border: 1px solid transparent;
+      }
+      
+      img:hover{
+        cursor: pointer;
+      }
+    }
+
+  }
+
+  .forget{
+
+    overflow: hidden;
+    .forget-btn{
+      float: right;
+    }
+  }
 }
 </style>
+

@@ -4,6 +4,9 @@
             <el-form-item label="用户名" prop="username">
                 <el-input v-model="userInfo.username"></el-input>
             </el-form-item>
+            <el-form-item label="邮箱" prop="email">
+                <el-input v-model="userInfo.email"></el-input>
+            </el-form-item>
             <el-form-item label="密码" prop="password">
                 <el-input type="password" v-model="userInfo.password"></el-input>
             </el-form-item>
@@ -20,6 +23,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import { EMAIL_REGX } from '@/const';
 
 
 export default {
@@ -35,12 +39,23 @@ export default {
                 callback();
             }
         };
+
+        let valdiateEmail = (rule, value, callback) => {
+            if(value.trim() === ''){
+                callback(new Error('请输入游戏'));
+            }else if(!EMAIL_REGX.test(value)){
+                callback(new Error('邮箱格式不正确'))
+            }else{
+                callback();
+            }
+        }
         return {
             userInfo: {
                 id: null,
                 username: '',
                 password: '',
-                confirmPassword: ''
+                confirmPassword: '',
+                email: ''
             },
             rules: {
                 username: [
@@ -51,6 +66,9 @@ export default {
                 ],
                 confirmPassword: [
                     { required: true, trigger: 'blur', validator: validatePass2 }
+                ],
+                email: [
+                    { required: true, trigger: 'blur', validator: valdiateEmail }
                 ]
             }
         }
@@ -58,12 +76,14 @@ export default {
     computed: {
         ...mapGetters([
             'userId',
-            'name'
+            'name',
+            'email'
         ])
     },
     created() {
         this.userInfo.id = this.userId;
         this.userInfo.username = this.name;
+        this.userInfo.email = this.email
     },
     methods: {
         resetForm() {
